@@ -1,0 +1,220 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="theme-color" content="#00ff88">
+    <link rel="manifest" href="/static/manifest.json">
+    <title>Monitor Pix - Dashboard Profissional</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700;800&display=swap" rel="stylesheet">
+    <script src="https://unpkg.com/lucide@latest"></script>
+    <style>
+        body {
+            background-color: #0a0a0a;
+            color: #f8fafc;
+            font-family: 'Inter', sans-serif;
+            background-image: 
+                radial-gradient(circle at 20% 20%, rgba(0, 255, 136, 0.05) 0%, transparent 40%),
+                radial-gradient(circle at 80% 80%, rgba(0, 255, 136, 0.05) 0%, transparent 40%);
+            min-height: 100vh;
+        }
+
+        .glass-card {
+            background: rgba(255, 255, 255, 0.03);
+            backdrop-filter: blur(10px);
+            border: 1px solid rgba(255, 255, 255, 0.05);
+            border-radius: 24px;
+        }
+
+        .glass-card-hover {
+            transition: all 0.3s ease;
+        }
+
+        .glass-card-hover:hover {
+            background: rgba(255, 255, 255, 0.05);
+            border-color: rgba(255, 255, 255, 0.1);
+        }
+
+        .status-badge {
+            display: inline-flex;
+            align-items: center;
+            padding: 4px 12px;
+            border-radius: 9999px;
+            font-size: 14px;
+            font-weight: 600;
+            background: rgba(0, 255, 136, 0.1);
+            color: #00ff88;
+            border: 1px solid rgba(0, 255, 136, 0.2);
+        }
+
+        .valor-display {
+            font-size: 72px;
+            font-weight: 800;
+            background: linear-gradient(to bottom right, #00ff88, #00ccff);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            letter-spacing: -2px;
+        }
+
+        .total-display {
+            font-size: 32px;
+            font-weight: 700;
+            color: #00ff88;
+        }
+
+        .history-item {
+            transition: all 0.3s ease;
+            border-left: 4px solid transparent;
+        }
+
+        .history-item:hover {
+            background: rgba(255, 255, 255, 0.05);
+            border-left-color: #00ff88;
+            transform: translateX(4px);
+        }
+
+        .stat-card {
+            background: rgba(0, 255, 136, 0.05);
+            border: 1px solid rgba(0, 255, 136, 0.2);
+            border-radius: 16px;
+            padding: 16px;
+            text-align: center;
+        }
+
+        @keyframes pulse {
+            0%, 100% { opacity: 1; }
+            50% { opacity: 0.5; }
+        }
+
+        .live-indicator {
+            width: 8px;
+            height: 8px;
+            background-color: #00ff88;
+            border-radius: 50%;
+            display: inline-block;
+            margin-right: 8px;
+            box-shadow: 0 0 10px #00ff88;
+            animation: pulse 2s cubic-bezier(0.4, 0, 0.6, 1) infinite;
+        }
+
+        .time-badge {
+            display: inline-block;
+            background: rgba(0, 255, 136, 0.1);
+            color: #00ff88;
+            padding: 4px 8px;
+            border-radius: 6px;
+            font-size: 12px;
+            font-weight: 600;
+            font-family: 'Courier New', monospace;
+        }
+    </style>
+</head>
+<body class="p-4 md:p-8">
+    <div class="max-w-2xl mx-auto">
+        <!-- Header -->
+        <header class="flex justify-between items-center mb-8">
+            <div class="flex items-center gap-2">
+                <i data-lucide="activity" class="text-[#00ff88]"></i>
+                <h1 class="text-xl font-bold tracking-tight">MONITOR PIX</h1>
+            </div>
+            <div class="status-badge">
+                <span class="live-indicator"></span>
+                {{status}}
+            </div>
+        </header>
+
+        <!-- Main Display -->
+        <main class="text-center mb-12">
+            <p class="text-slate-400 font-medium mb-2 uppercase tracking-widest text-sm">Último Recebimento</p>
+            <div class="valor-display mb-6">
+                {{valor}}
+            </div>
+
+            <!-- Stats Grid -->
+            <div class="grid grid-cols-2 gap-4 mb-8">
+                <div class="stat-card glass-card-hover">
+                    <p class="text-slate-400 text-xs uppercase tracking-wider mb-2">Total Hoje</p>
+                    <p class="text-2xl font-bold text-[#00ff88]">R$ {{total}}</p>
+                </div>
+                <div class="stat-card glass-card-hover">
+                    <p class="text-slate-400 text-xs uppercase tracking-wider mb-2">Recebimentos</p>
+                    <p class="text-2xl font-bold text-[#00ccff]">{{historico|length}}</p>
+                </div>
+            </div>
+
+            <div class="glass-card px-6 py-3 flex items-center justify-center gap-2">
+                <i data-lucide="trending-up" class="w-4 h-4 text-[#00ff88]"></i>
+                <span class="text-sm font-semibold text-slate-300">Atualizado em tempo real</span>
+            </div>
+        </main>
+
+        <!-- History Section -->
+        <section>
+            <div class="flex items-center justify-between mb-6 px-2">
+                <h2 class="text-lg font-bold flex items-center gap-2">
+                    <i data-lucide="history" class="w-5 h-5 text-slate-400"></i>
+                    Últimos Recebimentos
+                </h2>
+                <span class="text-xs text-slate-500 font-medium uppercase tracking-tighter">Histórico</span>
+            </div>
+
+            <div class="glass-card overflow-hidden">
+                <div class="divide-y divide-white/5">
+                    {% for pix in historico %}
+                    <div class="history-item p-5 flex items-center justify-between">
+                        <div class="flex items-center gap-4">
+                            <div class="w-10 h-10 rounded-full bg-[#00ff88]/10 flex items-center justify-center">
+                                <i data-lucide="arrow-down-left" class="w-5 h-5 text-[#00ff88]"></i>
+                            </div>
+                            <div class="text-left">
+                                <p class="font-semibold text-slate-200">Pix Recebido</p>
+                                <span class="time-badge">{{pix.hora}}</span>
+                            </div>
+                        </div>
+                        <div class="text-right">
+                            <p class="text-lg font-bold text-[#00ff88]">R$ {{pix.valor}}</p>
+                        </div>
+                    </div>
+                    {% endfor %}
+                    
+                    {% if not historico %}
+                    <div class="p-12 text-center">
+                        <i data-lucide="inbox" class="w-12 h-12 text-slate-700 mx-auto mb-4"></i>
+                        <p class="text-slate-500">Nenhum recebimento ainda hoje.</p>
+                    </div>
+                    {% endif %}
+                </div>
+            </div>
+        </section>
+
+        <!-- Footer Info -->
+        <footer class="mt-12 text-center">
+            <p class="text-slate-600 text-xs">
+                &copy; 2026 Monitor Pix Dashboard • Alan Silva • Desenvolvido com Python, Flask, Tailwind CSS e Lucide Icons
+            </p>
+        </footer>
+    </div>
+
+    <script>
+        // Initialize Lucide icons
+        lucide.createIcons();
+
+        // Register Service Worker for PWA
+        if ("serviceWorker" in navigator) {
+            navigator.serviceWorker.register("/static/service-worker.js")
+                .then(registration => {
+                    console.log("✅ Service Worker registrado com sucesso");
+                })
+                .catch(error => {
+                    console.log("⚠️ Erro ao registrar Service Worker:", error);
+                });
+        }
+
+        // Auto-refresh every 3 seconds
+        setInterval(() => {
+            window.location.reload();
+        }, 3000);
+    </script>
+</body>
+</html>
