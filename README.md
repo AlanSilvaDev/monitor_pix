@@ -94,9 +94,6 @@ Você pode instalar o Monitor Pix como um aplicativo para ter acesso rápido e u
 -   **No Desktop (Chrome/Edge):** Acesse `http://localhost:5000` e clique no ícone de "Instalar" que aparece na barra de endereços.
 -   **No Celular (Android/iOS):** Acesse o site pelo navegador, abra o menu de opções e selecione **"Adicionar à tela de início"** ou **"Instalar Aplicativo"**.
 
-<p align="center">
-  <img src="https://raw.githubusercontent.com/user-attachments/assets/516a247a-9302-45f6-9521-42352882502c" alt="PWA Install" width="300">
-</p>
 
 ## 📁 Estrutura do Projeto
 
