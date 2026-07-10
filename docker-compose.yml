@@ -1,0 +1,44 @@
+name: monitor-pix
+services:
+  monitor-pix:
+    image: monitor-pix:1.0
+    container_name: monitor-pix
+    restart: unless-stopped
+    network_mode: bridge
+    ports:
+      - target: 5000
+        published: "${WEBUI_PORT:-5000}"
+        protocol: tcp
+    environment:
+      - MP_ACCESS_TOKEN=SEU_TOKEN_REAL_AQUI
+      - TZ=$TZ
+      - PUID=$PUID
+      - PGID=$PGID
+    x-casaos:
+      envs:
+        - container: MP_ACCESS_TOKEN
+          description:
+            en_US: Mercado Pago production access token
+            pt_BR: Token de acesso de produção do Mercado Pago
+      ports:
+        - container: "5000"
+          description:
+            en_US: Web UI port
+            pt_BR: Porta da interface web
+      volumes: []
+      main: monitor-pix
+      author: AlanSilvaDev
+      category: Utilities
+      title:
+        en_US: Monitor Pix
+        pt_BR: Monitor Pix
+      port_map: "${WEBUI_PORT:-5000}"
+      description:
+        en_US: Real-time Pix payment monitor via Mercado Pago API
+        pt_BR: Monitor de pagamentos Pix em tempo real via API do Mercado Pago
+      tagline:
+        pt_BR: Acompanhe seus recebimentos Pix
+      icon: "https://raw.githubusercontent.com/AlanSilvaDev/monitor_pix/main/img.png"
+      architectures:
+        - amd64
+        - arm64

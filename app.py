@@ -1,3 +1,4 @@
+import os
 from flask import Flask, render_template
 import requests
 import time
@@ -18,7 +19,8 @@ app = Flask(__name__)
 
 
 # Token de acesso do Mercado Pago
-ACCESS_TOKEN = "SEU_ACCESS_TOKEN_AQUI"
+ACCESS_TOKEN = os.environ.get("MP_ACCESS_TOKEN", "SEU_ACCESS_TOKEN_AQUI")
+
 
 # Variáveis globais para armazenar o estado
 ultimo_pagamento = None
